@@ -2,18 +2,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Node* node_create(unsigned int stack_size) {
+Node* node_create(unsigned int stack_size, void* retbuf, volatile _Bool* is_ready, void* params) {
     Node* node = (Node*)malloc(sizeof(Node));
     if (!node) exit(1);
 
-    node->label = NULL;
-    
     // stack not in heap for main thread (stack_size == 0)
     if (stack_size == 0)
         node->stack_mem = NULL;
     else 
         node->stack_mem = malloc(stack_size);
 
+    if(is_ready) *is_ready = 0;
+    node->params = params;
+    node->retbuf = retbuf;
+    node->is_ready = is_ready;
     node->next = NULL;
     node->ctx = (Context){0};
 
@@ -23,7 +25,7 @@ Node* node_create(unsigned int stack_size) {
 _Loop loop_create(void) {
     return (_Loop) {
         // first node is the main thread, stack already provided by OS
-        .node = node_create(0),
+        .node = node_create(0, NULL, 0, NULL),
         .dead = NULL,
         .current = 0,
         .size = 1
@@ -78,11 +80,11 @@ Node* loop_get_last(void) {
     return current;
 }
 
-void loop_push(unsigned int stack_size) { 
+void loop_push(unsigned int stack_size, void* retbuf, volatile _Bool* is_ready, void* params) { 
     if (!loop_ptr) return;
 
     if (!loop_ptr->node) {
-        loop_ptr->node = node_create(stack_size);
+        loop_ptr->node = node_create(stack_size, retbuf, is_ready, params);
         loop_ptr->size = 1;
         return;
     }
@@ -92,7 +94,7 @@ void loop_push(unsigned int stack_size) {
         current = current->next;
     }
     
-    current->next = node_create(stack_size);
+    current->next = node_create(stack_size, retbuf, is_ready, params);
     loop_ptr->size++;
 }
 

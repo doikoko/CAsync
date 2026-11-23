@@ -22,14 +22,4 @@
 
 #define AWAIT() AWAIT_IMPL(CAT(_LABEL, __COUNTER__))
 
-#define ADD_TO_LOOP(func, stack_size) do { \
-    loop_push(stack_size); \
-    Node* _last = loop_get_last(); \
-    uintptr_t _top = ((uintptr_t)_last->stack_mem + (stack_size)) & ~0xFULL; \
-    *(uint64_t*)(_top - 8) = (uint64_t)coroutine_exit; \
-    *(uint64_t*)(_top - 16) = (uint64_t)(uintptr_t)(func); \
-    _last->ctx.rsp = _top - 16; \
-    _last->label = (void*)(uintptr_t)(func); \
-} while(0)
-
 #endif
