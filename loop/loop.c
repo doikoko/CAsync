@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Node* node_create(unsigned int stack_size, void* retbuf, volatile _Bool* is_ready, void* params) {
+Node* node_create(unsigned int stack_size, void* retbuf, _Bool* is_ready, void* params) {
     Node* node = (Node*)malloc(sizeof(Node));
     if (!node) exit(1);
 
@@ -80,7 +80,7 @@ Node* loop_get_last(void) {
     return current;
 }
 
-void loop_push(unsigned int stack_size, void* retbuf, volatile _Bool* is_ready, void* params) { 
+void loop_push(unsigned int stack_size, void* retbuf, _Bool* is_ready, void* params) { 
     if (!loop_ptr) return;
 
     if (!loop_ptr->node) {

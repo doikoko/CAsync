@@ -8,7 +8,7 @@
 #define CAT_(a, b) a##b
 #define CAT(a, b) CAT_(a, b)
 
-#define DEFAULT_STACK_SIZE 0x10000
+#define DEFAULT_STACK_SIZE 0x4000
 
 #define AWAIT_IMPL(label) do { \
     loop_clean_dead(); \

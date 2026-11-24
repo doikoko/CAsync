@@ -6,7 +6,7 @@
 typedef struct Node {
     Context ctx;
     void* retbuf;
-    volatile bool *is_ready;
+    bool *is_ready;
     void* params;
     void* stack_mem;
     struct Node* next;
@@ -33,7 +33,7 @@ Node* loop_next_node(void);
 Node* loop_next_context(void);
 Node* loop_get_last(void);
 Context* loop_get_context(unsigned int index);
-void loop_push(unsigned int stack_size, void* retbuf, volatile _Bool* is_ready, void* params);
+void loop_push(unsigned int stack_size, void* retbuf, _Bool* is_ready, void* params);
 void loop_remove(unsigned int index);
 void coroutine_exit(void);
 
